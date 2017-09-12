@@ -38,6 +38,7 @@ app.get('/*', routes.notFound)
 
 //Post Routes...
 app.post('/subject/:subject/newPost', routes.subjectSubmittedPost)
+app.post('/subject/:subject/post/:post/submitted', routes.commentSubmitted)
 app.listen(process.env.PORT || 3000, async () => {
 	console.log('Started a server on port 3000');
 });

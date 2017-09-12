@@ -35,7 +35,7 @@
       </div>
       <div class="container">
         <div class="row center-align center" style="padding-top : 10%;">
-          <form class="col s12" method="post" action="/subject/<%=subject%>/post/<%=postID%>/submitted">
+          <form class="col s12" method="post" action="/subject/<%=subject%>/post/<%=postID%>">
            <div class="row">
              <div class="input-field col s12">
                  <i class="material-icons prefix">mode_edit</i>
@@ -53,6 +53,7 @@
            </form>
          </div>
       </div>
+      <%console.log(comments.length)%>
       <% for (let i = 0; i < comments.length; i++) {%>
       <div class="col s12 m8 offset-m2 l6 offset-l3">
         <div class="card-panel grey lighten-5 z-depth-1">

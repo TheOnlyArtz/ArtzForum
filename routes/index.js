@@ -1,36 +1,63 @@
-exports.home = function (req, res) {
+exports.home = async function (req, res) {
   res.render('home')
 }
 
-exports.subject = function (req, res) {
+exports.subject = async function (req, res) {
+  const exists = await r.table('Subjects').get(req.params.subject)
+  if (exists === null) {
+    return res.redirect('/*')
+  }
   res.render('subject', {
-    subject : 'subject'
+    subject : req.params.subject
   })
 }
 
-exports.subjectPost = function (req, res) {
+exports.subjectPost = async function (req, res) {
   res.render(`subjectPost`, {
     subject : req.params.subject
   })
 }
 
-exports.subjectSubmittedPost = function (req, res) {
+exports.subjectSubmittedPost = async function (req, res) {
   let title = req.body.postTitle
   let content = req.body.postContent
-  res.render(`subjectPost`, {
-    subject : req.params.subject
-  })
+  let subject = req.body.postSubject
+  // res.render(`subjectPost`, {
+  //   subject : req.params.subject
+  // })
 
-  function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for (var i = 0; i < 9; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  const URI_ID = await makeid();
+  const URL = `/subject/${subject}/${URI_ID}`
 
-    return text;
+  try {
+    await r.table('Posts').insert({
+      postID : URI_ID,
+      postURI : URL,
+      subject : subject,
+      title : title,
+      content : content,
+    });
+    res.redirect(`/subject/${subject}`)
+  } catch (e) {
+     res.redirect('SubjectFailure')
   }
+}
 
-  const URI_ID = makeid();
+exports.notFound = function (req, res) {
+  res.render('notFound')
+}
 
+exports.postPage = function (req, res) {
+  res.render('postPage')
+}
+
+async function makeid() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 9; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }

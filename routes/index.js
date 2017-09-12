@@ -48,8 +48,21 @@ exports.notFound = function (req, res) {
   res.render('notFound')
 }
 
-exports.postPage = function (req, res) {
-  res.render('postPage')
+exports.postPage = async function (req, res) {
+  const forumExists = await r.table('Subjects').get(req.params.subject)
+  const postExists = await r.table('Posts').getAll(req.params.subject, {index : "subject"})
+  const _POST = await r.table('Posts').getAll(req.params.subject, {index : "subject"})
+  .filter({postID : req.params.post}).run();
+  if (!_POST[0].postID || !forumExists === null || !postExists[0]) {
+    res.redirect('/*');
+    return;
+  }
+
+  res.render('postPage', {
+    title : _POST[0].title,
+    content : _POST[0].content,
+    postID : _POST[0].postID,
+  })
 }
 
 async function makeid() {

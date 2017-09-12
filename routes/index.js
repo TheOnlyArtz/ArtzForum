@@ -7,8 +7,10 @@ exports.subject = async function (req, res) {
   if (exists === null) {
     return res.redirect('/*')
   }
+  const recentPosts = await r.table('Posts').getAll(req.params.subject, {index : "subject"}).run()
   res.render('subject', {
-    subject : req.params.subject
+    subject : req.params.subject,
+    recentPosts : recentPosts,
   })
 }
 
@@ -28,7 +30,7 @@ exports.subjectSubmittedPost = async function (req, res) {
 
 
   const URI_ID = await makeid();
-  const URL = `/subject/${subject}/${URI_ID}`
+  const URL = `/subject/${subject}/post/${URI_ID}`
 
   try {
     await r.table('Posts').insert({
@@ -38,7 +40,7 @@ exports.subjectSubmittedPost = async function (req, res) {
       title : title,
       content : content,
     });
-    res.redirect(`/subject/${subject}`)
+    res.redirect(URL)
   } catch (e) {
      res.redirect('SubjectFailure')
   }
@@ -60,6 +62,7 @@ exports.postPage = async function (req, res) {
 
   res.render('postPage', {
     title : _POST[0].title,
+    subject : _POST[0].subject,
     content : _POST[0].content,
     postID : _POST[0].postID,
   })
